@@ -184,6 +184,39 @@ class PorterStemmer(object):
                     return stem + replacement
         return word
 
+    def _step_4(self, word):
+        """Method which executes step 4 of the Porter stemming algorithm.
+
+            @param word: word :str: that should be stemmed.
+
+            @return: word stem :str:
+        """
+        sufixes = [("al", ""), ("ance", ""), ("ence", ""), ("er", ""),
+                   ("ic", ""), ("able", ""), ("ible", ""), ("ant", ""),
+                   ("ement", ""), ("ment", ""), ("ent", "")]
+
+        for sufix, replacement in sufixes:
+            if word.endswith(sufix):
+                stem = word.replace(sufix, "")
+                if self._measures_word(stem) > 1:
+                    return stem + replacement
+
+        if word.endswith("ion"):
+            stem = word.replace(sufix, "")
+            if self._measures_word(stem) > 1 and stem[-1] in "st":
+                return stem
+
+        sufixes = [("ou", ""), ("ism", ""), ("ate", ""), ("iti", ""),
+                   ("ous", ""), ("ive", ""), ("ize", "")]
+
+        for sufix, replacement in sufixes:
+            if word.endswith(sufix):
+                stem = word.replace(sufix, "")
+                if self._measures_word(stem) > 1:
+                    return stem + replacement
+
+        return word
+
     # ##################
     # # PUBLIC METHODS #
     # ##################
@@ -202,5 +235,6 @@ class PorterStemmer(object):
         stem = self._step_1c(stem)
         stem = self._step_2(stem)
         stem = self._step_3(stem)
+        stem = self._step_4(stem)
 
         return stem
