@@ -129,6 +129,17 @@ class PorterStemmer(object):
 
         return stem
 
+    def _step_1c(self, word):
+        """Method which executes step 1c of the Porter stemming algorithm.
+
+            @param word: word :str: that should be stemmed.
+
+            @return: word stem :str:
+        """
+        if word.endswith("y") and self._has_vowels(word):
+            return word.replace("y", "i")
+        return word
+
     # ##################
     # # PUBLIC METHODS #
     # ##################
@@ -144,5 +155,6 @@ class PorterStemmer(object):
 
         stem = self._step_1a(word)
         stem = self._step_1b(stem)
+        stem = self._step_1c(stem)
 
         return stem
