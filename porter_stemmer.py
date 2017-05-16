@@ -162,6 +162,28 @@ class PorterStemmer(object):
                     return stem + replacement
         return word
 
+    def _step_3(self, word):
+        """Method which executes step 3 of the Porter stemming algorithm.
+
+            @param word: word :str: that should be stemmed.
+
+            @return: word stem :str:
+        """
+        sufixes = [("icate", "ic"),
+                   ("ative", ""),
+                   ("alize", "al"),
+                   ("iciti", "ic"),
+                   ("ical", "ic"),
+                   ("ful", ""),
+                   ("ness", "")]
+
+        for sufix, replacement in sufixes:
+            if word.endswith(sufix):
+                stem = word.replace(sufix, "")
+                if self._measures_word(stem) > 0:
+                    return stem + replacement
+        return word
+
     # ##################
     # # PUBLIC METHODS #
     # ##################
@@ -179,5 +201,6 @@ class PorterStemmer(object):
         stem = self._step_1b(stem)
         stem = self._step_1c(stem)
         stem = self._step_2(stem)
+        stem = self._step_3(stem)
 
         return stem
