@@ -237,6 +237,18 @@ class PorterStemmer(object):
 
         return word
 
+    def _step_5b(self, word):
+        """Method which executes step 5b of the Porter stemming algorithm.
+
+            @param word: word :str: that should be stemmed.
+
+            @return: word stem :str:
+        """
+        if (self._measures_word(word) > 1 and word[-1] == "l" and
+                self._ends_with_double_consonants(word)):
+            return word[:-1]
+        return word
+
     # ##################
     # # PUBLIC METHODS #
     # ##################
@@ -257,5 +269,6 @@ class PorterStemmer(object):
         stem = self._step_3(stem)
         stem = self._step_4(stem)
         stem = self._step_5a(stem)
+        stem = self._step_5b(stem)
 
         return stem
