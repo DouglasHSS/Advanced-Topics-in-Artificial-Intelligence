@@ -8,6 +8,30 @@ class PorterStemmer(object):
     # ###################
     # # PRIVATE METHODS #
     # ###################
+    def _ends_with_double_consonants(self, stem):
+        """Method which checks if a stem ends with double consonants.
+
+            @param stem: stem :str: to be checked.
+
+            @return: :boolean:
+         """
+        return (len(stem) > 1 and
+                not self._is_vowel(stem, -1)
+                and stem[-1] == stem[-2])
+
+    def _ends_with_cvc(self, stem):
+        """Method which checks if a stem ends with a consonant, a vowel and a consonant
+            respectively.
+
+            @param stem: stem :str: to be checked.
+
+            @return: :boolean:
+         """
+        return (len(stem) > 2 and
+                not self._is_vowel(stem, -3) and
+                self._is_vowel(stem, -2) and
+                not self._is_vowel(stem, -1))
+
     def _has_vowels(self, word):
         """Method which checks whether a word has vowels or not.
 
@@ -78,31 +102,6 @@ class PorterStemmer(object):
 
             @return: word stem :str:
         """
-
-        def _ends_with_double_consonants(stem):
-            """Function which checks if a stem ends with double consonants.
-
-                @param stem: stem :str: to be checked.
-
-                @return: :boolean:
-             """
-            return (len(stem) > 1 and
-                    not self._is_vowel(stem, -1)
-                    and stem[-1] == stem[-2])
-
-        def _ends_with_cvc(stem):
-            """Function which checks if a stem ends with a consonant, a vowel and a consonant
-                respectively.
-
-                @param stem: stem :str: to be checked.
-
-                @return: :boolean:
-             """
-            return (len(stem) > 2 and
-                    not self._is_vowel(stem, -3) and
-                    self._is_vowel(stem, -2) and
-                    not self._is_vowel(stem, -1))
-
         if word.endswith("eed"):
             stem = word.replace("eed", "ee")
             return stem if self._measures_word(stem) > 0 else word
@@ -121,10 +120,10 @@ class PorterStemmer(object):
             if stem.endswith(sufix):
                 return stem + "e"
 
-        if stem[-1] not in "lsz" and _ends_with_double_consonants(stem):
+        if stem[-1] not in "lsz" and self._ends_with_double_consonants(stem):
             return stem[:-1]
 
-        if self._measures_word(stem) == 1 and _ends_with_cvc(stem) and stem[-3] not in "wxy":
+        if self._measures_word(stem) == 1 and self._ends_with_cvc(stem) and stem[-3] not in "wxy":
             return stem + "e"
 
         return stem
@@ -202,7 +201,7 @@ class PorterStemmer(object):
                     return stem + replacement
 
         if word.endswith("ion"):
-            stem = word.replace(sufix, "")
+            stem = word.replace("ion", "")
             if self._measures_word(stem) > 1 and stem[-1] in "st":
                 return stem
 
@@ -214,6 +213,27 @@ class PorterStemmer(object):
                 stem = word.replace(sufix, "")
                 if self._measures_word(stem) > 1:
                     return stem + replacement
+
+        return word
+
+    def _step_5a(self, word):
+        """Method which executes step 5a of the Porter stemming algorithm.
+
+            @param word: word :str: that should be stemmed.
+
+            @return: word stem :str:
+        """
+
+        if word.endswith("e"):
+            stem = word[:-1]
+            if self._measures_word(stem) > 1:
+                return stem
+
+        if word.endswith("e"):
+            stem = word[:-1]
+            if (self._measures_word(stem) == 1 and
+                    not(self._ends_with_cvc(stem) and stem[-3] not in "wxy")):
+                return stem
 
         return word
 
@@ -236,5 +256,6 @@ class PorterStemmer(object):
         stem = self._step_2(stem)
         stem = self._step_3(stem)
         stem = self._step_4(stem)
+        stem = self._step_5a(stem)
 
         return stem
