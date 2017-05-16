@@ -140,6 +140,28 @@ class PorterStemmer(object):
             return word.replace("y", "i")
         return word
 
+    def _step_2(self, word):
+        """Method which executes step 2 of the Porter stemming algorithm.
+
+            @param word: word :str: that should be stemmed.
+
+            @return: word stem :str:
+        """
+        sufixes = [("ational", "ate"), ("tional", "tion"), ("enci", "ence"),
+                   ("anci", "ance"), ("izer", "ize"), ("abli", "able"),
+                   ("alli", "al"), ("eli", "e"), ("entli", "ent"),
+                   ("ousli", "ous"), ("ization", "ize"), ("ation", "ate"),
+                   ("ator", "ate"), ("alism", "al"), ("iveness", "ive"),
+                   ("fulness", "ful"), ("ousness", "ous"), ("aliti", "al"),
+                   ("iviti", "ive"), ("biliti", "ble")]
+
+        for sufix, replacement in sufixes:
+            if word.endswith(sufix):
+                stem = word.replace(sufix, "")
+                if self._measures_word(stem) > 0:
+                    return stem + replacement
+        return word
+
     # ##################
     # # PUBLIC METHODS #
     # ##################
@@ -156,5 +178,6 @@ class PorterStemmer(object):
         stem = self._step_1a(word)
         stem = self._step_1b(stem)
         stem = self._step_1c(stem)
+        stem = self._step_2(stem)
 
         return stem
