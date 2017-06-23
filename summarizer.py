@@ -4,6 +4,8 @@ import nltk
 from math import log
 from string import punctuation
 
+from utils import initialize_nltk_tokenizer, initialize_nltk_stopwords
+
 
 class Sumarizador(object):
 
@@ -17,28 +19,15 @@ class Sumarizador(object):
         self.idf_palavras = {}
         self.sentencas_pontuadas = []
 
-        self._inicializar_nltk()
+        initialize_nltk_tokenizer()
+        initialize_nltk_stopwords()
+
         self._separar_sentencas()
         self._separar_palavras()
 
     ###################
     # PRIVATE METHODS #
     ###################
-
-    def _inicializar_nltk(self):
-        try:
-            nltk.data.find('tokenizers/punkt')
-        except:
-            print "Baixando e instalando Punkt tokenizer..."
-            nltk.download('punkt')
-            print "Punkt tokenizer instalado!"
-
-        try:
-            nltk.data.find('corpora/stopwords')
-        except:
-            print "Baixando lista de stopwords..."
-            nltk.download('stopwords')
-            print "Stopwords baixadas!"
 
     def _separar_sentencas(self):
         self.sentencas = nltk.tokenize.sent_tokenize(self.texto)
